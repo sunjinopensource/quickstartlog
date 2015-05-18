@@ -1,2 +1,4 @@
-# quickstartlog
-A simple log utility for building application quickly, with a console StreamHandler and a RotateFileHandler
+quickstartlog
+=============
+
+A simple log utility, write log into console & file(TimedRotatingFileHandler)
