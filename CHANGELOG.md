@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+add set_format
+
 ## 0.1.2
 
 change README.rst

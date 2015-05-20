@@ -4,17 +4,18 @@ import logging
 import logging.handlers
 
 
+__version__ = '0.1.3'
+
+
 if sys.version_info[0] == 3:
     _unicode = str
 else:
     _unicode = unicode
 
 
-__version__ = '0.1.2'
-
-
 _domain = 'quickstartlog'
 _level = logging.INFO
+_format = ['[%(asctime)s %(levelname)-5.5s] %(message)s', '%H:%M:%S']
 _file_path = os.path.join('var', 'log', 'quickstart.log')
 _file_encoding = 'utf8'
 _msg_encoding = 'utf8'
@@ -29,6 +30,14 @@ def set_domain(domain):
 def set_level(level):
     global _level
     _level = level
+
+
+def set_format(fmt=None, datefmt=None):
+    global _format
+    if fmt is not None:
+        _format[0] = fmt
+    if datefmt is not None:
+        _format[1] = datefmt
 
 
 def set_file_path(path):
@@ -70,10 +79,9 @@ def _create_logger():
     logger = logging.getLogger(_domain)
     logger.setLevel(_level)
 
-    formatter = logging.Formatter('[%(asctime)s %(levelname)-5.5s] %(message)s', '%H:%M:%S')
+    formatter = logging.Formatter(_format[0], _format[1])
 
     console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
     console.setFormatter(formatter)
     logger.addHandler(console)
 
@@ -82,7 +90,6 @@ def _create_logger():
         os.makedirs(dir_path)
 
     file_handler = logging.handlers.TimedRotatingFileHandler(_file_path, 'D', 1, 30, _file_encoding)
-    file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     return logger
