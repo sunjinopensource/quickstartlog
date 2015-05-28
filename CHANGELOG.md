@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+change README.rst
+
 ## 0.1.4
 
 windows console output with color
