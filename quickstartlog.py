@@ -155,18 +155,6 @@ def ex_info_done(msg, *args, **kwargs):
     _get_logger().info(_decode(msg), *args, **kwargs)
 
 
-class ColorStream(object):
-    def __init__(self, stream):
-        self.used_stream = stream
-
-    def flush(self):
-        if self.used_stream and hasattr(self.used_stream, "flush"):
-            self.used_stream.flush()
-
-    def write(self, msg):
-        self.used_stream.write(msg)
-
-
 def _create_logger():
     logger = logging.getLogger(_domain)
     logger.setLevel(_level)
