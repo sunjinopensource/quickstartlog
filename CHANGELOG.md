@@ -2,6 +2,10 @@
 
 ## 0.1.5
 
+add ex_info_done
+
+## 0.1.5
+
 change README.rst
 
 ## 0.1.4

@@ -5,7 +5,7 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 
 if sys.version_info[0] == 3:
@@ -42,6 +42,9 @@ class ConsoleColorControl(object):
     def critical(self):
         self.error()
 
+    def ex_done(self):
+        self.info()
+
 
 class WindowsConsoleColorControl(ConsoleColorControl):
     STD_INPUT_HANDLE = -10
@@ -68,6 +71,9 @@ class WindowsConsoleColorControl(ConsoleColorControl):
 
     def error(self):
         self._set_text_color(self.__class__.FOREGROUND_RED)
+
+    def ex_info_done(self):
+        self._set_text_color(self.__class__.FOREGROUND_GREEN)
 
 
 _console_color_control = WindowsConsoleColorControl() if os.name == 'nt' else ConsoleColorControl()
@@ -134,6 +140,11 @@ def error(msg, *args, **kwargs):
 def critical(msg, *args, **kwargs):
     _console_color_control.critical()
     _get_logger().critical(_decode(msg), *args, **kwargs)
+
+
+def ex_info_done(msg, *args, **kwargs):
+    _console_color_control.ex_info_done()
+    _get_logger().info(_decode(msg), *args, **kwargs)
 
 
 class ColorStream(object):
