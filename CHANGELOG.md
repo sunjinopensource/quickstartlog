@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.8
+
+change color mechanism
+
+## 0.1.7
+
+remove useless class ColorStream
+
 ## 0.1.6
 
 change log file path

@@ -5,7 +5,7 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 
 if sys.version_info[0] == 3:
@@ -31,60 +31,62 @@ _msg_encoding = 'utf8'
 _logger = None
 
 
-class ConsoleColorControl(object):
-    def default_color(self):
-        pass
+if os.name == 'nt':
+    BLACK = 0X00
+    GRAY = 0X08
 
-    def debug(self):
-        self.default_color()
+    BLUE = 0X01
+    LIGHT_BLUE = 0X09
 
-    def info(self):
-        self.debug()
+    GREEN = 0X02
+    LIGHT_GREEN = 0X0A
 
-    def warn(self):
-        self.info()
+    AQUA = 0X03
+    LIGHT_AQUA = 0X0B
 
-    def error(self):
-        self.debug()
+    RED = 0X04
+    LIGHT_RED = 0X0C
 
-    def critical(self):
-        self.error()
+    PURPLE = 0X05
+    LIGHT_PURPLE = 0X0D
 
-    def ex_done(self):
-        self.info()
+    YELLOW = 0X06
+    LIGHT_YELLOW = 0X0E
+
+    WHITE = 0X07
+    BRIGHT_WHITE = 0X0F
+
+    DEFAULT_FORE_COLOR = WHITE
+    DEFAULT_BACK_COLOR = BLACK
+else:
+    raise NotImplementedError('Unsupported os.')
 
 
-class WindowsConsoleColorControl(ConsoleColorControl):
+class _LoggingWithColoredConsole(object):
+    def __init__(self, log_func_name, fore_color, back_color):
+        self.log_func_name = log_func_name
+        self.fore_color = fore_color
+        self.back_color = back_color
+    def __call__(self, msg, *args, **kwargs):
+        exec('_get_logger().%s(_decode(msg), *args, **kwargs)' % self.log_func_name)
+
+
+class _WindowsLoggingWithColoredConsole(_LoggingWithColoredConsole):
     STD_INPUT_HANDLE = -10
     STD_OUTPUT_HANDLE = -11
     STD_ERROR_HANDLE = -12
 
-    FOREGROUND_WHITE = 0x0f
-    FOREGROUND_RED = 0x0c
-    FOREGROUND_GREEN = 0x0a
-    FOREGROUND_BLUE = 0x09
-    FOREGROUND_YELLOW = 0x0e
+    handle = ctypes.windll.kernel32.GetStdHandle(STD_ERROR_HANDLE)
 
-    def __init__(self):
-        self.handle = ctypes.windll.kernel32.GetStdHandle(self.__class__.STD_ERROR_HANDLE)
-
-    def _set_text_color(self, color):
-        ctypes.windll.kernel32.SetConsoleTextAttribute(self.handle, color)
-
-    def default_color(self):
-        self._set_text_color(self.__class__.FOREGROUND_WHITE)
-
-    def warn(self):
-        self._set_text_color(self.__class__.FOREGROUND_YELLOW)
-
-    def error(self):
-        self._set_text_color(self.__class__.FOREGROUND_RED)
-
-    def ex_info_done(self):
-        self._set_text_color(self.__class__.FOREGROUND_GREEN)
+    def __init__(self, log_func_name, fore_color=DEFAULT_FORE_COLOR, back_color=DEFAULT_BACK_COLOR):
+        super(_WindowsLoggingWithColoredConsole, self).__init__(log_func_name, fore_color, back_color)
+    def __call__(self, msg, *args, **kwargs):
+        ctypes.windll.kernel32.SetConsoleTextAttribute(self.__class__.handle, self.fore_color|self.back_color)
+        super(_WindowsLoggingWithColoredConsole, self).__call__(msg, *args, **kwargs)
+        ctypes.windll.kernel32.SetConsoleTextAttribute(self.__class__.handle, DEFAULT_FORE_COLOR|DEFAULT_BACK_COLOR)
 
 
-_console_color_control = WindowsConsoleColorControl() if os.name == 'nt' else ConsoleColorControl()
+_cls_LoggingWithColoredConsole = _WindowsLoggingWithColoredConsole if os.name == 'nt' else _LoggingWithColoredConsole
 
 
 def set_domain(domain):
@@ -120,39 +122,44 @@ def set_msg_encoding(encoding):
     _msg_encoding = encoding
 
 
-def set_console_color_control(color_control):
-    global _console_color_control
-    _console_color_control = color_control
+def debug_ex(*args, **kwargs):
+    return _cls_LoggingWithColoredConsole('debug', *args, **kwargs)
+
+
+def info_ex(*args, **kwargs):
+    return _cls_LoggingWithColoredConsole('info', *args, **kwargs)
+
+
+def warn_ex(*args, **kwargs):
+    return _cls_LoggingWithColoredConsole('warn', *args, **kwargs)
+
+
+def error_ex(*args, **kwargs):
+    return _cls_LoggingWithColoredConsole('error', *args, **kwargs)
+
+
+def critical_ex(*args, **kwargs):
+    return _cls_LoggingWithColoredConsole('critical', *args, **kwargs)
 
 
 def debug(msg, *args, **kwargs):
-    _console_color_control.debug()
-    _get_logger().debug(_decode(msg), *args, **kwargs)
+    debug_ex()(msg, *args, **kwargs)
 
 
 def info(msg, *args, **kwargs):
-    _console_color_control.info()
-    _get_logger().info(_decode(msg), *args, **kwargs)
+    info_ex()(msg, *args, **kwargs)
 
 
 def warn(msg, *args, **kwargs):
-    _console_color_control.warn()
-    _get_logger().warn(_decode(msg), *args, **kwargs)
+    warn_ex(LIGHT_YELLOW)(msg, *args, **kwargs)
 
 
 def error(msg, *args, **kwargs):
-    _console_color_control.error()
-    _get_logger().error(_decode(msg), *args, **kwargs)
+    error_ex(LIGHT_RED)(msg, *args, **kwargs)
 
 
 def critical(msg, *args, **kwargs):
-    _console_color_control.critical()
-    _get_logger().critical(_decode(msg), *args, **kwargs)
-
-
-def ex_info_done(msg, *args, **kwargs):
-    _console_color_control.ex_info_done()
-    _get_logger().info(_decode(msg), *args, **kwargs)
+    critical_ex(LIGHT_RED)(msg, *args, **kwargs)
 
 
 def _create_logger():
