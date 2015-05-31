@@ -14,7 +14,7 @@ main.py::
     qslog.warn('this is warning message')
     qslog.error('this is error message')
     
-console output & ./var/log/quickstart.log::
+console output & ./var/log/main.log::
     
     [10:13:44 INFO ] this is info message
     [10:13:44 WARNI] this is warning message

@@ -5,7 +5,7 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 
 if sys.version_info[0] == 3:
@@ -14,12 +14,20 @@ else:
     _unicode = unicode
 
 
-_domain = 'quickstartlog'
+_domain = None
 _level = logging.INFO
 _format = ['[%(asctime)s %(levelname)-5.5s] %(message)s', '%H:%M:%S']
-_file_path = os.path.join('var', 'log', 'quickstart.log')
+
+_prog = os.path.basename(sys.argv[0])
+_prog_ext_index = _prog.rfind('.')
+if _prog_ext_index != -1:
+    _prog = _prog[:_prog_ext_index]
+
+_file_path = os.path.join('var', 'log', '%s.log' % _prog)
+
 _file_encoding = 'utf8'
 _msg_encoding = 'utf8'
+
 _logger = None
 
 

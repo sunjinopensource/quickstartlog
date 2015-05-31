@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+change log file path
+
 ## 0.1.5
 
 add ex_info_done
