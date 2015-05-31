@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9
+
+fix README.rst
+
 ## 0.1.8
 
 change color mechanism
