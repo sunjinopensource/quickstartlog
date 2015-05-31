@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.12
+
+DEFAULT_FORE_COLOR: WHITE -> BRIGHT_WHITE
+
 ## 0.1.11
 
 fix README.rst

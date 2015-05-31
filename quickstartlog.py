@@ -5,7 +5,7 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.11'
+__version__ = '0.1.12'
 
 
 if sys.version_info[0] == 3:
@@ -56,7 +56,7 @@ if os.name == 'nt':
     WHITE = 0X07
     BRIGHT_WHITE = 0X0F
 
-    DEFAULT_FORE_COLOR = WHITE
+    DEFAULT_FORE_COLOR = BRIGHT_WHITE
     DEFAULT_BACK_COLOR = BLACK
 else:
     raise NotImplementedError('Unsupported os.')
