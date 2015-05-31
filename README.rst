@@ -17,7 +17,7 @@ main.py::
     
 console output & ./var/log/main.log::
 
-    [19:04:46 INFO ] this is info message
-    [19:04:46 WARNI] this is warning message
-    [19:04:46 ERROR] this is error message
-    [19:04:46 INFO ] this is info message with LIGHT_GREEN
+    [19:30:07 INFO ] this is info
+    [19:30:07 WARNI] this is warning
+    [19:30:07 ERROR] this is error
+    [19:30:07 INFO ] this is info with LIGHT_GREEN

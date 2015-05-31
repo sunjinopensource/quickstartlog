@@ -5,7 +5,7 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.10'
+__version__ = '0.1.11'
 
 
 if sys.version_info[0] == 3:
