@@ -5,13 +5,15 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.12'
+__version__ = '0.1.13'
 
 
 if sys.version_info[0] == 3:
     _unicode = str
+    _base_string = str
 else:
     _unicode = unicode
+    _base_string = basestring
 
 
 _domain = None
@@ -68,7 +70,10 @@ class _LoggingWithColoredConsole(object):
         self.fore_color = fore_color
         self.back_color = back_color
     def __call__(self, msg, *args, **kwargs):
-        exec('_get_logger().%s(_decode(msg), *args, **kwargs)' % self.log_func_name)
+        adjust_args = []
+        for arg in args:
+            adjust_args.append(_decode(arg) if isinstance(arg, _base_string) else arg)
+        exec('_get_logger().%s(_decode(msg), *adjust_args, **kwargs)' % self.log_func_name)
 
 
 class _WindowsLoggingWithColoredConsole(_LoggingWithColoredConsole):
