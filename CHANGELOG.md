@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.14
+
+DEFAULT_FORE_COLOR: BRIGHT_WHITE -> WHITE
+
 ## 0.1.13
 
 fix *args encoding error
