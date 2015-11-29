@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.15
+
+Support a default message encoding list
+
 ## 0.1.14
 
 DEFAULT_FORE_COLOR: BRIGHT_WHITE -> WHITE

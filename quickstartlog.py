@@ -5,7 +5,7 @@ import logging.handlers
 import ctypes
 
 
-__version__ = '0.1.14'
+__version__ = '0.1.15'
 
 
 if sys.version_info[0] == 3:
@@ -28,9 +28,23 @@ if _prog_ext_index != -1:
 _file_path = os.path.join('var', 'log', '%s.log' % _prog)
 
 _file_encoding = 'utf8'
-_msg_encoding = 'utf8'
+_default_msg_encodings = ['utf8', 'gbk']
+_msg_encoding = _default_msg_encodings[:]
 
 _logger = None
+
+
+class Error(Exception):
+    pass
+
+
+class UnsupportedMessageEncoding(Error):
+    def __init__(self, msg):
+        Error.__init__(self, msg)
+        self.msg = msg
+
+    def __str__(self):
+        return "Message '%s' can't decode by [%s]" % (self.msg, ', '.join(_msg_encoding))
 
 
 if os.name == 'nt':
@@ -124,7 +138,8 @@ def set_file_encoding(encoding):
 
 def set_msg_encoding(encoding):
     global _msg_encoding
-    _msg_encoding = encoding
+    _msg_encoding.remove(encoding)
+    _msg_encoding.insert(0, encoding)
 
 
 def debug_ex(*args, **kwargs):
@@ -198,4 +213,9 @@ def _decode(msg):
     if isinstance(msg, _unicode):
         return msg
     else:
-        return msg.decode(_msg_encoding)
+        for encoding in _msg_encoding:
+            try:
+                return msg.decode(encoding)
+            except:
+                pass
+        raise UnsupportedMessageEncoding(msg)
